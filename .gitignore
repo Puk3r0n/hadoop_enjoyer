@@ -1,0 +1,3 @@
+.secrets/
+*.tar.gz
+.DS_Store
