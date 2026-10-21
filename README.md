@@ -7,6 +7,7 @@
 hw1_hdfs - развёртывание HDFS: NameNode, Secondary NameNode, 3 DataNode.
 hw2_yarn - развёртывание YARN и публикация веб-интерфейсов демонов наружу.
 hw3_hive - развёртывание Hive с внешним metastore на PostgreSQL и загрузка данных в партиционированную таблицу.
+hw4_spark - Spark под YARN: чтение из HDFS, трансформации, запись партиционированной таблицы в Hive Metastore, чтение через beeline.
 
 inventory.env - параметры стенда: узлы, роли, версии, пути, ресурсы.
 common/lib.sh - общие функции скриптов.
@@ -15,12 +16,12 @@ common/lib.sh - общие функции скриптов.
 
 4 ВМ Ubuntu 24.04, 2 vCPU, 3 ГБ RAM. Снаружи доступна только edge-нода.
 
-    team-09-en  10.9.0.10  edge: клиент, отсюда запускаются скрипты, nginx, Hive Metastore, HiveServer2, PostgreSQL
+    team-09-en  10.9.0.10  edge: клиент, отсюда запускаются скрипты, nginx, Hive Metastore, HiveServer2, PostgreSQL, клиент Spark
     team-09-nn  10.9.0.11  NameNode, DataNode, ResourceManager, NodeManager
     team-09-00  10.9.0.12  Secondary NameNode, DataNode, NodeManager
     team-09-01  10.9.0.13  DataNode, NodeManager, JobHistory Server
 
-Hadoop 3.4.2, Hive 4.0.0-alpha-2, PostgreSQL 16, OpenJDK 11.
+Hadoop 3.4.2, Hive 4.0.0-alpha-2, Spark 3.5.9, PostgreSQL 16, OpenJDK 11.
 
 ## Запуск
 
@@ -32,18 +33,21 @@ Hadoop 3.4.2, Hive 4.0.0-alpha-2, PostgreSQL 16, OpenJDK 11.
     ./hw1_hdfs/scripts/deploy_hdfs.sh
     ./hw2_yarn/scripts/deploy_yarn.sh
     ./hw3_hive/scripts/deploy_hive.sh
+    ./hw4_spark/scripts/deploy_spark.sh
 
-Подробности в hw1_hdfs/README.md, hw2_yarn/README.md и hw3_hive/README.md.
+Подробности в README.md каждого задания.
 
 ## Перенос в другую среду
 
-Правится только inventory.env: узлы и их IP, роли, доступ с edge на узлы, внешний адрес и карта публикации интерфейсов, версии Hadoop и Hive, ресурсы NodeManager, узел и порты Hive. Конфиги Hadoop и конфигурация nginx генерируются из инвентаря, скрипты править не нужно.
+Правится только inventory.env: узлы и их IP, роли, доступ с edge на узлы, внешний адрес и карта публикации интерфейсов, версии Hadoop, Hive и Spark, ресурсы NodeManager и приложений Spark, узел и порты Hive. Конфиги Hadoop и конфигурация nginx генерируются из инвентаря, скрипты править не нужно.
 
 ## Повторный запуск
 
-Безопасен. Установленное не переустанавливается, NameNode не переформатируется, схема metastore не пересоздаётся, запущенные демоны не перезапускаются, блоки в /etc/hosts и hadoop-env.sh заменяются по маркерам BEGIN/END hadoop_hw. Загрузка в Hive идёт через INSERT OVERWRITE по партициям, повторный запуск не дублирует строки.
+Безопасен. Установленное не переустанавливается, NameNode не переформатируется, схема metastore не пересоздаётся, запущенные демоны не перезапускаются, блоки в /etc/hosts и hadoop-env.sh заменяются по маркерам BEGIN/END hadoop_hw. Загрузка в Hive идёт через INSERT OVERWRITE по партициям, задача Spark перезаписывает свою таблицу целиком, повторный запуск не дублирует строки.
 
 ## Остановка
+
+У Spark нет демонов: приложение освобождает контейнеры YARN после завершения.
 
     ./hw3_hive/scripts/stop_hive.sh
     ./hw2_yarn/scripts/unpublish_ui.sh
