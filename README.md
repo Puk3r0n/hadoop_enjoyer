@@ -8,6 +8,7 @@ hw1_hdfs - развёртывание HDFS: NameNode, Secondary NameNode, 3 Data
 hw2_yarn - развёртывание YARN и публикация веб-интерфейсов демонов наружу.
 hw3_hive - развёртывание Hive с внешним metastore на PostgreSQL и загрузка данных в партиционированную таблицу.
 hw4_spark - Spark под YARN: чтение из HDFS, трансформации, запись партиционированной таблицы в Hive Metastore, чтение через beeline.
+hw5_prefect - поток Prefect: Spark-сессия под YARN, чтение из HDFS, трансформации, сохранение таблицы в Hive Metastore.
 
 inventory.env - параметры стенда: узлы, роли, версии, пути, ресурсы.
 common/lib.sh - общие функции скриптов.
@@ -34,6 +35,7 @@ Hadoop 3.4.2, Hive 4.0.0-alpha-2, Spark 3.5.9, PostgreSQL 16, OpenJDK 11.
     ./hw2_yarn/scripts/deploy_yarn.sh
     ./hw3_hive/scripts/deploy_hive.sh
     ./hw4_spark/scripts/deploy_spark.sh
+    ./hw5_prefect/scripts/deploy_prefect.sh
 
 Подробности в README.md каждого задания.
 
